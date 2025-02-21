@@ -1,0 +1,904 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "=خیلی حقوق میگیری حال نمیکنم محاسبه کنم \nفعلا",
+        "replyMarkup": "inlineKeyboard",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [0, 180],
+      "id": "564b148d-c193-4ea7-8c99-3f94e0888945",
+      "name": "Over Salary",
+      "webhookId": "0b9d01fb-88f7-4777-909b-0a9d6299a935",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "=خیلی کم حقوق میگیری بیخیال\nولش کن اصلا",
+        "replyMarkup": "inlineKeyboard",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "id": "3f6828c8-acf1-45b2-96da-082c0aec608d",
+      "name": "Lower Salary",
+      "webhookId": "b819d557-f109-4a45-aa54-62c7f4e3ee6f",
+
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "updates": ["message"],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [-1260, 300],
+      "id": "78650abf-0769-4710-819f-d5aafe3ae161",
+      "name": "Telegram Trigger",
+      "webhookId": "fd451bbc-49e5-4dc9-bf83-15f9e5fa26ee"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "230a9dc2-cc70-4256-a58e-8d2480bc0675",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/salary",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ec6096ba-686c-4a57-a079-2bbeb0af230c",
+                    "leftValue": "={{ $json.message.reply_to_message }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "87b5d1b3-5089-4bbc-b74d-bdae883b0b1d",
+                    "leftValue": "={{ $json.message.entities[0].type }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notExists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a786ebb5-2639-4559-a9db-be50204be832",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/disable",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [-1080, 260],
+      "id": "ac83b845-6acd-4e02-a9c7-b01573e67306",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.salary }}",
+                    "rightValue": 5000000,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "1119f319-4acc-4fef-a58c-44e7321d6c5d",
+                    "leftValue": "={{ $json.salary }}",
+                    "rightValue": 100000000,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "81b29089-4b67-4d82-b5c9-5245d25f2d4e",
+                    "leftValue": "={{ $json.salary }}",
+                    "rightValue": 5000001,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4c9ff48b-5d9e-4b03-9a7d-3d99152b7e52",
+                    "leftValue": "={{ $json.salary }}",
+                    "rightValue": 99999999,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lt"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [-260, 220],
+      "id": "e6db9a9c-5307-4c4d-9055-744137b214b8",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 2
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-420, 580],
+      "id": "be56b7e1-0184-489a-84a4-a16f95b194f7",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://bonbast.org/?ajax=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-220, 580],
+      "id": "c0a97b4f-c219-40d9-94ca-5f977b7106e9",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "=چی زدی؟\n/start بزن",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [-680, 420],
+      "id": "cc750485-3f97-4416-863e-da63ea1322c1",
+      "name": "Wrong Command Message",
+      "webhookId": "8fffd582-397e-4420-94dc-d41281f07042",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "=به بات کد بزن، حمال! خوش آمدی.\nهیچ هدفی پشت این بات نیست.\nصرفاً روزی یک بار یادآوری میکنه.\nشاید یه تکونی بدی، بیشتر کد بزنی.\nاگه کد هم نمیزنی، اصلاً مهم نیست، این مال کد‌نویس‌هاست.\nدوست داشتی استفاده کن، نداشتی که هیچی.\nکامند زیر بزن، بعد حقوقت رو وارد کن:\n/salary\n\nنکته:وقتی حقوقتو وارد کنی یوزرنیم و اسم تلگرامتون و حقوقتون ذخیره میشه ",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [-880, 60],
+      "id": "264a3b5b-3d2f-4429-afc1-ff00481f6a3e",
+      "name": "Welcome Message",
+      "webhookId": "f7a658a1-fe45-4a7b-a9e4-6d0f09ccc230",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "da930bb3-2864-4a58-beff-0738392ca3bd",
+              "leftValue": "={{ !isNaN($json.message.text) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-680, 240],
+      "id": "66a2669e-a884-4656-913d-9b50b5f0bf5b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "=حقوق الانت\nبا دلار {{ Intl.NumberFormat('en-US').format(Number($json.buy_rate)) }} تومن\n{{\nIntl.NumberFormat('en-US',{ style: 'currency', currency: 'USD' }).format(Number(Number(Number($json.salary) / Number($json.buy_rate))))\n}} میگیری\nبیشتر کد بزن ...",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [0, 740],
+      "id": "9def367c-9578-4dae-bb9a-1757736be9cd",
+      "name": "Reminder Salary",
+      "webhookId": "fe932451-3bb7-4035-ac73-76ae41e6690b",
+
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT u.*, cr.buy_rate\nFROM users u\nLEFT JOIN (\n    SELECT buy_rate FROM currency_rates ORDER BY fetched_at DESC LIMIT 1\n) cr ON 1=1\nWHERE u.is_enable = 1;\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-220, 740],
+      "id": "976aa440-63cc-433a-ac47-723fa1d10216",
+      "name": "Postgres1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT u.*, cr.buy_rate\nFROM users u\nLEFT JOIN (\n    SELECT buy_rate FROM currency_rates ORDER BY fetched_at DESC LIMIT 1\n) cr ON 1=1\nWHERE u.user_id = '{{ $json.user_id }}';\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [0, 360],
+      "id": "d4b3f91f-e4ea-4b9b-8bd2-645060259a83",
+      "name": "Postgres"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "users",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "user_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.message.chat.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "is_enable",
+              "fieldValue": "0"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [-880, 600],
+      "id": "152d6263-1a3a-435b-9ceb-b1d13a11bfc0",
+      "name": "Disable Reminder"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "دیگه بدبختیارو بهت یادآوری نمیکنم بای",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [-680, 600],
+      "id": "ef149bb2-900e-40c8-a30b-1aca3a0c9484",
+      "name": "Disable Message",
+      "webhookId": "50dae3e1-7363-4d53-a1ba-dee47241f27c",
+      "notesInFlow": false,
+      "executeOnce": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "tableId": "currency_rates",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "currency_code",
+              "fieldValue": "USD"
+            },
+            {
+              "fieldId": "sell_rate",
+              "fieldValue": "={{ Number($json.USD.sell_rate.replace(/,/g, '')); }}"
+            },
+            {
+              "fieldId": "buy_rate",
+              "fieldValue": "={{ Number($json.USD.buy_rate.replace(/,/g, '')); }}"
+            },
+            {
+              "fieldId": "fetched_at",
+              "fieldValue": "={{ $json.USD.fetched_at }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [0, 580],
+      "id": "784b33e1-8938-4e32-9168-aecdc1318d71",
+      "name": "Save USD Price"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "حقوقتو به تومن وارد کن",
+        "replyMarkup": "forceReply",
+        "forceReply": {
+          "force_reply": true
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [-460, 60],
+      "id": "1cd78e31-18e5-485a-831b-e6641f2e1871",
+      "name": "Input Salary",
+      "webhookId": "eb2e267a-2d72-47c2-8988-9cba3c81d6b3",
+      "notesInFlow": false,
+      "executeOnce": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.user_id }}",
+        "text": "=حقوق الانت\nبا دلار {{ Intl.NumberFormat('en-US').format(Number($json.buy_rate)) }} تومن\n{{\nIntl.NumberFormat('en-US',{ style: 'currency', currency: 'USD' }).format(Number(Number(Number($json.salary) / Number($json.buy_rate))))\n}} میگیری\nبیشتر کد بزن ...\n\nروزی یه بار بهت یادآوری میکنم",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [200, 360],
+      "id": "7f35bc10-2098-4881-ab50-8ae2d95794ed",
+      "name": "Send Salary Message",
+      "webhookId": "d089a9c4-e75a-42c7-9786-a17d95f74e35",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "users",
+          "mode": "list",
+          "cachedResultName": "users"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "is_bot": "={{ $json.message.from.is_bot }}",
+            "hasSalary": "={{ true }}",
+            "user_id": "={{ $json.message.from.id }}",
+            "first_name": "={{ $json.message.from.first_name }}",
+            "last_name": "={{ $json.message.from.last_name }}",
+            "username": "={{ $json.message.from.username }}",
+            "language_code": "={{ $json.message.from.language_code }}",
+            "salary": "={{ $json.message.text }}",
+            "update_at": "={{ $now }}",
+            "is_enable": "={{ $json.message.text <= 100000000 ? ($json.message.text >= 5000000 ? 1 : 0) : 0 }}",
+            "chat_id": "={{ $json.message.from.id }}"
+          },
+          "matchingColumns": ["user_id"],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": true,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "is_bot",
+              "displayName": "is_bot",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "first_name",
+              "displayName": "first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "last_name",
+              "displayName": "last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "username",
+              "displayName": "username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "language_code",
+              "displayName": "language_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "salary",
+              "displayName": "salary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "update_at",
+              "displayName": "update_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "hasSalary",
+              "displayName": "hasSalary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "is_enable",
+              "displayName": "is_enable",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-460, 240],
+      "id": "fc0210b3-aeec-4baf-98c1-c932a7456aed",
+      "name": "Postgres2"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-420, 740],
+      "id": "a9274b8a-7413-4b38-9e6c-679f81ed044a",
+      "name": "Daily Job"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Welcome Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Input Salary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wrong Command Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Disable Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Lower Salary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Over Salary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Save USD Price",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Postgres2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Input Salary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres1": {
+      "main": [
+        [
+          {
+            "node": "Reminder Salary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Send Salary Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Disable Reminder": {
+      "main": [
+        [
+          {
+            "node": "Disable Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres2": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Job": {
+      "main": [
+        [
+          {
+            "node": "Postgres1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fdb245fd-1195-4ffc-9a95-ad7d411e67eb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "237ab7027dc471d7ad9b37a5f90d7b99e4ecebc801228502e82ed5c5b99345fa"
+  },
+  "id": "9CTLJPYybjPY3L1E",
+  "tags": [
+    {
+      "name": "Proud",
+      "id": "uariCjnjhlUe4DhM",
+      "createdAt": "2025-02-21T10:12:34.486Z",
+      "updatedAt": "2025-02-21T10:12:34.486Z"
+    }
+  ]
+}
